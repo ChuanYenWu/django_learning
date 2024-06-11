@@ -1,0 +1,29 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>訂單列表</h1>
+  {% if buyingmodel_list %}
+    <table class="ordertable">
+      <tr>
+        <th>訂購人</th>
+        <th>手機</th>
+        <th>葷食便當</th>
+        <th>素食便當</th>
+        <th>總金額</th>
+        <th>購買日期</th>
+      </tr>
+      {% for order in buyingmodel_list %}
+      <tr>
+        <td>{{ order.customer_name }}</td>
+        <td>{{ order.customer_phone }}</td>
+        <td>{{ order.meat_num }}</td>
+        <td>{{ order.vege_num }}</td>
+        <td>{{ order.total_cost }}</td>
+        <td>{{ order.buytime }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>目前無訂單</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>訂購歷史結果</h1>
+  {% if page_obj %}
+    <table class="ordertable">
+      <tr>
+        <th>訂購人</th>
+        <th>手機</th>
+        <th>葷食便當</th>
+        <th>素食便當</th>
+        <th>總金額</th>
+        <th>購買日期</th>
+      </tr>
+      {% for order in page_obj %}
+      <tr>
+        <td>{{ order.customer_name }}</td>
+        <td>{{ order.customer_phone }}</td>
+        <td>{{ order.meat_num }}</td>
+        <td>{{ order.vege_num }}</td>
+        <td>{{ order.total_cost }}</td>
+        <td>{{ order.buytime }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>無此電話之訂單</p>
+  {% endif %}
+
+{% endblock %}
+
+{% comment %}
+{% block pagination %}
+  {% if page_obj.has_previous or page_obj.has_next %}
+    <div class="pagination">
+      <span class="page-links">
+      {% if page_obj.has_previous %}
+        <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
+      {% endif %}
+      <span class="page-current">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+      </span>
+      {% if page_obj.has_next %}
+        <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
+      {% endif %}
+      </span>
+    </div>
+  {% endif %}
+{% endblock %}
+
+
+{% block pagination %}
+<div class="pagination">
+  {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}">上一頁</a>
+  {% endif %}
+
+  <span class="current-page">頁數：{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+
+  {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}">下一頁</a>
+  {% endif %}
+</div>
+{% endblock %}
+{% endcomment %}

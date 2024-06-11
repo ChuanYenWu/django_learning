@@ -1,0 +1,17 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>便當種類列表</h1>
+  {% if lunchboxmodel_list %}
+    <ul>
+      {% for lunchbox in lunchboxmodel_list %}
+      <li>
+        <a href="{{ lunchbox.get_absolute_url }}">{{ lunchbox.lunchbox_name }}</a>
+        ({{lunchbox.lunchbox_cost}}元)
+      </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>目前無便當</p>
+  {% endif %}
+{% endblock %}

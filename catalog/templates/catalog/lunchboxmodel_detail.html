@@ -1,0 +1,23 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>品項: {{ lunchboxmodel.lunchbox_name }}</h1>
+
+  <p><strong>簡介:</strong> {{ object.lunchbox_summary }}</p>
+  <p><strong>價格:</strong> {{ object.lunchbox_cost }}</p>
+
+  {% load static %}
+  {% if object.lunchbox_name == "素食便當" %}
+  <img  src="{% static 'images/vege.jpeg' %}"
+        alt="vegetable"
+        style="width:555px;height:auto;" />
+  {% elif object.lunchbox_name == "葷食便當" %}
+  <img  src="{% static 'images/meat.jpeg' %}"
+        alt="meat"
+        style="width:555px;height:auto;" />
+  {% else %}
+  <p>No image</p>
+  {% endif %}
+
+
+{% endblock %}
