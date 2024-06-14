@@ -21,3 +21,11 @@
 透過Form讓使用者輸入電話號碼，可以取得此電話過去訂購的內容(名字、電話、數量、金額、日期)，若訂購次數超過1次，所有訂購歷史都會呈現出來<br>
 <img src="/images/check_orderhistory.png" width="600" height="auto">
 <br>
+### 點擊"Login"(Staff 登入)
+運用Django內建的accounts view搭建login/logout，可以作為店員或顧客的區分(就算顧客也有帳號，也能由admin給予不同權限)<br>
+<img src="/images/staff_login.png" width="600" height="auto">
+<br>
+### 點擊"Orderlist"(Staff 權限)
+擁有staff權限的人，能夠由ListView取得所有訂單的資訊，另外有加入paginate，當object數量多時能夠換頁。<br>
+<img src="/images/staffview_orderlist.png" width="600" height="auto">
+<br>
