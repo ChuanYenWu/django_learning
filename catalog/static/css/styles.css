@@ -4,11 +4,11 @@
     list-style: none;
     background-color: lightblue;
   }
-
+/*
 li a {
   color: green;
 }
-
+*/
 #logout-form {
   display: inline;
 }

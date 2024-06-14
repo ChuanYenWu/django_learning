@@ -66,7 +66,8 @@ def neworder(request):
                 customer_phone= form.cleaned_data['customer_phone'],
                 meat_num= form.cleaned_data['meat_num'],
                 vege_num= form.cleaned_data['vege_num'],
-                total_cost= form.cleaned_data['vege_num']*80+form.cleaned_data['meat_num']*100,
+                total_cost= form.cleaned_data['vege_num']* LunchboxModel.objects.get(lunchbox_name='素食便當').lunchbox_cost
+                            +form.cleaned_data['meat_num']* LunchboxModel.objects.get(lunchbox_name='葷食便當').lunchbox_cost,
                 buytime=datetime.date.today()
             )
             order.save()
