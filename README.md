@@ -29,3 +29,13 @@
 擁有staff權限的人，能夠由ListView取得所有訂單的資訊，另外有加入paginate，當object數量多時能夠換頁。<br>
 <img src="/images/staffview_orderlist.png" width="600" height="auto">
 <br>
+
+### 新增"修改訂單"功能
+在查詢歷史表單的結果後，設計了若購買日期在3天之內，則能夠對訂單進行修改(超過3天的不會出現修改連結，就算以修改網址的方式成功進入修改頁面，表單也會顯示過期而無法生效)。<br>
+<img src="/images/change_order.png" width="600" height="auto">
+<br>
+
+### 新增"修改訂單&刪除訂單"的訂單管理功能(Staff 權限)
+在Staff 權限才能進入的Orderlist中，staff能對所有訂單進行修改和刪除，且沒有日期限制。<br>
+<img src="/images/staff_manage_order.png" width="600" height="auto">
+<br>
