@@ -10,4 +10,4 @@ class LunchboxAdmin(admin.ModelAdmin):
 
 @admin.register(BuyingModel)
 class BuyingAdmin(admin.ModelAdmin):
-    list_display = ('customer_name', 'customer_phone', 'meat_num', 'vege_num', 'total_cost', 'buytime')
+    list_display = ('id','customer_name', 'customer_phone', 'meat_num', 'vege_num', 'total_cost', 'buytime')

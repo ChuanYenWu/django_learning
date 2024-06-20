@@ -6,11 +6,14 @@ from .models import LunchboxModel, BuyingModel
 from django.views import generic
 from django.utils.decorators import method_decorator
 from django.contrib.admin.views.decorators import staff_member_required
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from catalog.forms import BuyingModelForm, CheckOrderForm
+from catalog.forms import BuyingModelForm, CheckOrderForm, UpdateForm_staff, UpdateForm_customer
 from django.core.paginator import Paginator
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+from django.db.models import BooleanField, Case, When, Value, F
 
 def index(request):
     """View function for home page of site."""
@@ -115,7 +118,18 @@ def checkorder(request):
 
 def order_result(request):
     phone_number = request.session['phone_number']
-    orderlist=BuyingModel.objects.filter(customer_phone=phone_number).order_by('-buytime')
+    orderlist=BuyingModel.objects.filter(customer_phone=phone_number).order_by('-id')
+    #latest_uuid = orderlist.latest('id').uuid
+    if orderlist:
+        three_days_ago = datetime.date.today() - datetime.timedelta(days=3)
+
+        orderlist = orderlist.annotate(
+            intime=Case(
+                When(buytime__gte=three_days_ago, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField(),
+            )
+        )
 
     paginator = Paginator(orderlist, 10)
     page_number = request.GET.get('page')
@@ -126,6 +140,105 @@ def order_result(request):
         'page_obj': page_obj,
         'is_paginated': page_obj.has_other_pages(),
         #'orderlist': orderlist,
+        #'latest_uuid': latest_uuid,
     }
 
     return render(request, 'catalog/order_result.html', context)
+
+
+#若使用UpdateView, 可由form_valid（super）方法和form.instance來修改價格（不可人為修改的部份）
+@staff_member_required(login_url='login')
+def update_orderview_staff(request, uuid):
+    order = get_object_or_404(BuyingModel, uuid=uuid)
+
+    # If this is a POST request then process the Form data
+    if request.method == 'POST':
+
+        # Create a form instance and populate it with data from the request (binding):
+        form = UpdateForm_staff(request.POST, instance=order)
+
+        # Check if the form is valid:
+        if form.is_valid():
+
+            #if order.buytime != datetime.date.today():
+            #    raise ValidationError(_('已過期，不可修改'))
+            #else:
+                order.customer_name = form.cleaned_data['customer_name']
+                order.customer_phone = form.cleaned_data['customer_phone']
+                order.meat_num = form.cleaned_data['meat_num']
+                order.vege_num = form.cleaned_data['vege_num']
+                order.total_cost = form.cleaned_data['vege_num']* LunchboxModel.objects.get(lunchbox_name='素食便當').lunchbox_cost \
+                                +form.cleaned_data['meat_num']* LunchboxModel.objects.get(lunchbox_name='葷食便當').lunchbox_cost
+                order.save()
+
+                return HttpResponseRedirect(reverse('orderlist'))
+        
+    else:
+        form = UpdateForm_staff(
+            initial={
+                'customer_name': order.customer_name, 
+                'customer_phone': order.customer_phone, 
+                'meat_num': order.meat_num, 
+                'vege_num': order.vege_num
+            }
+        )
+    context = {
+        'form': form,
+        'order': order,
+    }
+
+    return render(request, 'catalog/update_order_staff.html', context)
+
+@staff_member_required(login_url='login')
+def delete_orderview_staff(request, uuid):
+    order = get_object_or_404(BuyingModel, uuid=uuid)
+
+    if request.method == 'POST':
+        order.delete()
+        return redirect('orderlist')
+    return render(request, 'catalog/order_confirm_delete.html', {'order': order})
+
+def update_orderview_customer(request, uuid):
+    order = get_object_or_404(BuyingModel, uuid=uuid)
+    
+    # If this is a POST request then process the Form data
+    if request.method == 'POST':
+        
+        # Create a form instance and populate it with data from the request (binding):
+        #form = UpdateForm_customer(request.POST, instance=order)
+        form = UpdateForm_customer(request.POST)
+        
+        # Check if the form is valid:
+        if form.is_valid():
+            
+            if order.buytime < datetime.date.today() - datetime.timedelta(days=3):
+                form.add_error(None, ValidationError(_('已過期，不可修改')))
+            #if order.buytime != datetime.date.today():
+            #    raise ValidationError(_('已過期，不可修改'))
+            else:
+                order.customer_name = form.cleaned_data['customer_name']
+                order.customer_phone = form.cleaned_data['customer_phone']
+                order.meat_num = form.cleaned_data['meat_num']
+                order.vege_num = form.cleaned_data['vege_num']
+                order.total_cost = form.cleaned_data['vege_num']* LunchboxModel.objects.get(lunchbox_name='素食便當').lunchbox_cost \
+                                +form.cleaned_data['meat_num']* LunchboxModel.objects.get(lunchbox_name='葷食便當').lunchbox_cost
+                order.save()
+            # request.session['phone_number'] should still exist
+                return HttpResponseRedirect(reverse('order_result'))
+        
+    else:
+        form = UpdateForm_customer(
+            initial={
+                'customer_name': order.customer_name, 
+                'customer_phone': order.customer_phone, 
+                'meat_num': order.meat_num, 
+                'vege_num': order.vege_num
+            }
+        )
+    context = {
+        'form': form,
+        'order': order,
+    }
+    
+    # seems OK to use same template with staff version
+    return render(request, 'catalog/update_order_staff.html', context)

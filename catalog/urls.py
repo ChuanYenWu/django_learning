@@ -12,3 +12,10 @@ urlpatterns += [
     path('checkorder/', views.checkorder, name='checkorder'),
     path('order_result/', views.order_result, name='order_result'),
 ]
+urlpatterns += [
+    path('order/<uuid:uuid>/update', views.update_orderview_staff, name='updateorder_staff'),
+    path('order/<uuid:uuid>/delete', views.delete_orderview_staff, name='deleteorder_staff'),
+]
+urlpatterns += [
+    path('order/<uuid:uuid>/update/customer', views.update_orderview_customer, name='updateorder_customer'),
+]

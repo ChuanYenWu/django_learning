@@ -1,0 +1,23 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>更新訂單</h1>
+    <p>
+        <b>目前訂單</b><br>
+        訂購人:     {{order.customer_name}} <br>
+        電話:       {{order.customer_phone}} <br>
+        葷食便當數量: {{order.meat_num}} <br>
+        素食便當數量: {{order.vege_num}} <br>
+        總金額:      {{order.total_cost}} <br>
+        訂購日期:     {{order.buytime}} <br>
+    </p>
+    <p>修改訂單</p>
+    <form action="" method="post">
+        {% csrf_token %}
+        <table>
+        {{ form.as_table }}
+        </table>
+        <input type="submit" value="Submit">
+    </form>
+    
+{% endblock %}
