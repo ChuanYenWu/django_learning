@@ -75,13 +75,19 @@ def neworder(request):
             )
             order.save()
             # redirect to a new URL:
-            return HttpResponseRedirect(reverse('index'))
+            #return HttpResponseRedirect(reverse('index'))
+            # 從 POST 資料中取得 'next' 參數的值，如果沒有(會取得空字串)則預設為 'index'
+            next_url = request.POST.get('next') or 'index'  
+            #return HttpResponseRedirect(reverse(next_url))
+            #使用redirect可以接受相對路徑和urls.py的名稱, 不需要reverse
+            return redirect(next_url)
 
     # If this is a GET (or any other method) create the default form.
     else:
         #proposed_renewal_date = datetime.date.today() + datetime.timedelta(weeks=3)
         form = BuyingModelForm(initial={'meat_num': 0, 'vege_num': 0})
 
+    #在context中傳輸'next': request.GET.get('next')) 或直接在template中索取request.GET.next
     context = {
         'form': form,
     }
@@ -171,7 +177,9 @@ def update_orderview_staff(request, uuid):
                                 +form.cleaned_data['meat_num']* LunchboxModel.objects.get(lunchbox_name='葷食便當').lunchbox_cost
                 order.save()
 
-                return HttpResponseRedirect(reverse('orderlist'))
+                #return HttpResponseRedirect(reverse('orderlist'))
+                next_url = request.POST.get('next') or 'orderlist'
+                return redirect(next_url)
         
     else:
         form = UpdateForm_staff(

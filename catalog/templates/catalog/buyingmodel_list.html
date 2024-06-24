@@ -2,6 +2,7 @@
 
 {% block content %}
   <h1>訂單列表</h1>
+  <a href="{% url 'neworder' %}?next={{ request.get_full_path }}">新增訂單</a>
   {% if buyingmodel_list %}
     <table class="ordertable">
       <tr>
@@ -22,7 +23,7 @@
         <td>{{ order.vege_num }}</td>
         <td>{{ order.total_cost }}</td>
         <td>{{ order.buytime }}</td>
-        <td><a href="{% url 'updateorder_staff' order.uuid %}">修改</a></td>
+        <td><a href="{% url 'updateorder_staff' order.uuid %}?next={{ request.get_full_path }}">修改</a></td>
         <td><a href="{% url 'deleteorder_staff' order.uuid %}">刪除</a></td>
       </tr>
       {% endfor %}

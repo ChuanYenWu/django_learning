@@ -4,9 +4,20 @@ from django import forms
 from catalog.models import BuyingModel
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.core.validators import RegexValidator
 import datetime
 
 class BuyingModelForm(ModelForm):
+    def clean_customer_phone(self):
+        phone_number = self.cleaned_data.get('customer_phone')
+        phone_regex = r'^\d{10}$'
+        validator = RegexValidator(phone_regex, message="請輸入電話號(純數字)")
+        try:
+            validator(phone_number)
+        except ValidationError as e:
+            raise ValidationError(_("Invalid phone number: {}".format(e)))
+        return phone_number
+
     def clean_meat_num(self):
        data = self.cleaned_data['meat_num']
        if data < 0:
