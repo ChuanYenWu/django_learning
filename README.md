@@ -1,6 +1,13 @@
 以MDN Web DocS中，用Django來建一個簡單圖書館的[教學](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django "Link")為基礎，建立一個簡易的訂便當網頁。
 <br>
+
+### version 2
+此版本問題:只分出2個model:物品、訂單，且訂單中記錄各物品的訂購量。會造成若要對物品做改變，很多程式可能需要修改(例如多了一項物品，要在訂單model中多一組訂購量的field，程式計算金額部分也要添加)<br>
+因此version 2改成:物品、訂單、訂購數量3部分，以此建立更加general的版本。物品資訊不寫在程式中，才能任意增減物品項目，以及變換物品種類名稱<br>
+[version2連結](https://github.com/ChuanYenWu/django_learning_v2 "Link")
+
 <br>
+
 ### 首頁
 首頁帶有Database內Model的數量計算(便當種類、訂單數)、由Session記錄訪問次數、側邊欄導向不同頁面的連結
 <!--  ![index](/images/index.png "index") -->
